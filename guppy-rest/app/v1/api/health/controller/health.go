@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sofyan48/guppy/api/app/v1/api/health/service"
-	"github.com/sofyan48/guppy/api/app/v1/utility/rest"
+	"github.com/sofyan48/guppy/guppy-rest/app/v1/api/health/service"
+	"github.com/sofyan48/guppy/guppy-rest/app/v1/utility/rest"
 )
 
 // HealthController types

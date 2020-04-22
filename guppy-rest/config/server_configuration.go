@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sofyan48/guppy/api/middleware"
+	"github.com/sofyan48/guppy/guppy-rest/middleware"
 )
 
 // SetupRouter server router configuration

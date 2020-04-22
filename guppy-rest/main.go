@@ -6,10 +6,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/sofyan48/guppy/api/config"
+	"github.com/sofyan48/guppy/guppy-rest/config"
 
 	"github.com/joho/godotenv"
-	apiRouter "github.com/sofyan48/guppy/api/router"
+	apiRouter "github.com/sofyan48/guppy/guppy-rest/router"
 )
 
 // ConfigEnvironment ...

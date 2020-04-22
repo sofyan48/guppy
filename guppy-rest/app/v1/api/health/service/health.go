@@ -3,7 +3,7 @@ package service
 import (
 	"time"
 
-	"github.com/sofyan48/guppy/api/app/v1/api/health/entity"
+	"github.com/sofyan48/guppy/guppy-rest/app/v1/api/health/entity"
 )
 
 // HealthService ...
