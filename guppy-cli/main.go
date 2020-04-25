@@ -21,11 +21,14 @@ func main() {
 	params := client.GetParameters()
 	params.Path = "/prd/general/service/database/DATABASE_HOST"
 	params.Value = "localhost"
-	result, err := client.Put(params)
+	response, err := client.Put(params)
 	if err != nil {
 		log.Println("Put Error: ", err)
 		os.Exit(1)
 	}
+	fmt.Println(response)
+	fmt.Println("------------------------ RESULT ------------------------")
+	result, _ := client.Get(params)
 	fmt.Println(result)
 
 }
