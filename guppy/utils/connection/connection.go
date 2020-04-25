@@ -25,6 +25,6 @@ type ConnectInterface interface {
 func (conn *Connect) Init(config *entity.Config) (*clientv3.Client, error) {
 	return clientv3.New(clientv3.Config{
 		Endpoints:   config.Urls,
-		DialTimeout: config.DialTimeOut * time.Second,
+		DialTimeout: time.Duration(config.DialTimeOut) * time.Second,
 	})
 }
