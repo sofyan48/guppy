@@ -34,3 +34,4 @@ tmp
 go.sum
 
 build
+bin

@@ -38,6 +38,7 @@ func AppCommands() *cli.App {
 	handler := CLIMappingHandler()
 	app.Commands = []cli.Command{
 		handler.put(),
+		handler.get(),
 	}
 	return app
 }
