@@ -18,17 +18,16 @@ func main() {
 		log.Println("Client Not Connected: ", err)
 		os.Exit(1)
 	}
-	params := client.GetParameters()
-	params.Path = "/prd/general/service/database/DATABASE_HOST"
-	params.Value = "localhost"
-	response, err := client.Put(params)
-	if err != nil {
-		log.Println("Put Error: ", err)
-		os.Exit(1)
-	}
-	fmt.Println(response)
+	// params := client.GetParameters()
+	// params.Path = "/prd/general/service/database/DATABASE_USER"
+	// params.Value = "localhost"
+	// _, err = client.Put(params)
+	// if err != nil {
+	// 	log.Println("Put Error: ", err)
+	// 	os.Exit(1)
+	// }
 	fmt.Println("------------------------ RESULT ------------------------")
-	result, _ := client.Get(params)
-	fmt.Println(result)
+	result, _ := client.GetByPath("/prd/general/service/")
+	fmt.Println(result.Kvs)
 
 }

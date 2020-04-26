@@ -36,6 +36,7 @@ type EtcdLibsInterface interface {
 	Del(client *clientv3.Client, params *entity.Parameters) (*clientv3.DeleteResponse, error)
 	Init(config *config.Configs) (*clientv3.Client, error)
 	GetParameters() *entity.Parameters
+	GetByPath(path string) (*clientv3.GetResponse, error)
 }
 
 // GetParameters ...
@@ -61,9 +62,23 @@ func (lib *EtcdLibs) Del(params *entity.Parameters) (*clientv3.DeleteResponse, e
 }
 
 // Get ...
-func (lib *EtcdLibs) Get(params *entity.Parameters) (*clientv3.GetResponse, error) {
+func (lib *EtcdLibs) Get(path string) (*clientv3.GetResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), lib.DialTimeout)
-	result, err := lib.Client.Get(ctx, params.Path)
+	result, err := lib.Client.Get(ctx, path)
+	cancel()
+	return result, err
+}
+
+// GetByPath ...
+func (lib *EtcdLibs) GetByPath(path string) (*clientv3.GetResponse, error) {
+	opts := []clientv3.OpOption{
+		clientv3.WithPrefix(),
+		clientv3.WithSort(clientv3.SortByKey, clientv3.SortAscend),
+		clientv3.WithLimit(3),
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), lib.DialTimeout)
+	result, err := lib.Client.Get(ctx, path, opts...)
 	cancel()
 	return result, err
 }
