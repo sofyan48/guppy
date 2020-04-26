@@ -3,11 +3,12 @@ package utils
 import (
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/user"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -16,7 +17,6 @@ import (
 	"github.com/sofyan48/guppy/guppy/config"
 	"github.com/sofyan48/guppy/guppy/libs/etcd"
 	"github.com/urfave/cli"
-	"gopkg.in/yaml.v2"
 )
 
 // Utils ...
@@ -30,7 +30,23 @@ func UtilsHandler() *Utils {
 // UtilsInterface ..
 type UtilsInterface interface {
 	GetClients(urls []string) (*etcd.EtcdLibs, error)
-	ReadEnvironment(path string) *entity.Environment
+	Check(e error) error
+	LogInfo(word string, report interface{})
+	LogFatal(word string, report interface{})
+	CheckFile(path string) bool
+	MakeDirs(path string) error
+	FileRemove(path string) error
+	CreateFile(path string) bool
+	WriteFile(path string, value string, perm os.FileMode)
+	ReadFile(path string, perm os.FileMode) string
+	DeleteFile(path string) bool
+	CheckEnvironment(path string) (bool, error)
+	LoadEnvirontment(path string) *entity.Environment
+	ReadHome() string
+	GetCurrentPath() string
+	ConvertUnixTime(unixTime int64) time.Time
+	ParseJSON(data string) (map[string]interface{}, error)
+	CheckTemplateFile(path string) (string, error)
 }
 
 // GetClients ...
@@ -58,6 +74,7 @@ func (util *Utils) LogInfo(word string, report interface{}) {
 // LogFatal ...
 func (util *Utils) LogFatal(word string, report interface{}) {
 	log.Println(word, report)
+	exit(1)
 }
 
 // CheckFile function check folder
@@ -65,7 +82,7 @@ func (util *Utils) LogFatal(word string, report interface{}) {
 // return error
 func (util *Utils) CheckFile(path string) bool {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		util.LogFatal("Error :", err)
+		util.Check(err)
 		return false
 	}
 	return true
@@ -182,50 +199,17 @@ func (util *Utils) ReadHome() string {
 
 // LoadEnvirontment load environment config
 // @path : string
-func (util *Utils) LoadEnvirontment(path string) error {
+func (util *Utils) LoadEnvirontment(path string) *entity.Environment {
 	if path == "" {
-		homeDir := util.ReadHome()
-		err := godotenv.Load(homeDir + "/.guppy")
+		err := godotenv.Load(path)
 		util.Check(err)
-		return err
 	}
-	err := godotenv.Load(path)
+	homeDir := util.ReadHome()
+	err := godotenv.Load(homeDir + "/.guppy")
 	util.Check(err)
-	return err
-}
-
-// GetEnvirontment Get value from environtment
-// @key : string
-func (util *Utils) GetEnvirontment(key string) string {
-	var myEnv map[string]string
-	myEnv, err := godotenv.Read()
-	util.Check(err)
-	return myEnv[key]
-}
-
-// GetAllEnvirontment Get value from environtment
-// @key : string
-func (util *Utils) GetAllEnvirontment() map[string]string {
-	godotenv.Load()
-	var myEnv map[string]string
-	myEnv, err := godotenv.Read()
-	util.Check(err)
-	return myEnv
-}
-
-// ServiceRegisterYML read YML File
-// return map,error
-func (util *Utils) ServiceRegisterYML(path string) (entity.ServiceRegisterYML, error) {
-	taskRegister := entity.ServiceRegisterYML{}
-	ymlFile, err := ioutil.ReadFile(path)
-	if util.Check(err) != nil {
-		return taskRegister, err
-	}
-	err = yaml.Unmarshal(ymlFile, &taskRegister)
-	if util.Check(err) != nil {
-		return taskRegister, err
-	}
-	return taskRegister, nil
+	envi.DialTimeOut, _ = strconv.Atoi(os.Getenv("OS_DIAL_TIMEOUT"))
+	envi.Urls = strings.Split(os.Getenv("OS_URLS"), ",")
+	return envi
 }
 
 // GetCurrentPath get current path
@@ -261,7 +245,7 @@ func (util *Utils) ParseJSON(data string) (map[string]interface{}, error) {
 func (util *Utils) CheckTemplateFile(path string) (string, error) {
 	var templates string
 	if path == "" {
-		templates = util.GetCurrentPath() + "/dyno.yml"
+		templates = util.GetCurrentPath() + "/guppy.yml"
 	} else {
 		templates = path
 	}
