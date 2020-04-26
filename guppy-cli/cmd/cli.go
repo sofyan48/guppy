@@ -38,7 +38,7 @@ func Init() *cli.App {
 func AppCommands() *cli.App {
 	app := Init()
 	app.Commands = []cli.Command{
-		// service is here
+		put(),
 	}
 	return app
 }
