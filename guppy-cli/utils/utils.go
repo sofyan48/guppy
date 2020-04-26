@@ -12,10 +12,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/sofyan48/guppy/guppy"
 	"github.com/sofyan48/guppy/guppy-cli/entity"
-	"github.com/sofyan48/guppy/guppy/config"
-	"github.com/sofyan48/guppy/guppy/libs/etcd"
 	"github.com/urfave/cli"
 )
 
@@ -29,32 +26,27 @@ func UtilsHandler() *Utils {
 
 // UtilsInterface ..
 type UtilsInterface interface {
-	GetClients(urls []string) (*etcd.EtcdLibs, error)
 	Check(e error) error
 	LogInfo(word string, report interface{})
 	LogFatal(word string, report interface{})
+
+	ConvertUnixTime(unixTime int64) time.Time
+
 	CheckFile(path string) bool
 	MakeDirs(path string) error
 	FileRemove(path string) error
 	CreateFile(path string) bool
-	WriteFile(path string, value string, perm os.FileMode)
+	WriteFile(path string, value string, perm os.FileMode) bool
 	ReadFile(path string, perm os.FileMode) string
 	DeleteFile(path string) bool
-	CheckEnvironment(path string) (bool, error)
-	LoadEnvirontment(path string) *entity.Environment
 	ReadHome() string
 	GetCurrentPath() string
-	ConvertUnixTime(unixTime int64) time.Time
+
+	CheckEnvironment(path string) string
+	LoadEnvirontment(path string) *entity.Environment
+
 	ParseJSON(data string) (map[string]interface{}, error)
 	CheckTemplateFile(path string) (string, error)
-}
-
-// GetClients ...
-func (util *Utils) GetClients(envi *entity.Environment) (*etcd.EtcdLibs, error) {
-	config := config.NewConfig()
-	config.DialTimeOut = envi.DialTimeOut
-	config.Urls = envi.Urls
-	return guppy.Client(config).New()
 }
 
 // Check Error
@@ -74,7 +66,7 @@ func (util *Utils) LogInfo(word string, report interface{}) {
 // LogFatal ...
 func (util *Utils) LogFatal(word string, report interface{}) {
 	log.Println(word, report)
-	exit(1)
+	os.Exit(1)
 }
 
 // CheckFile function check folder
@@ -179,16 +171,6 @@ func (util *Utils) DeleteFile(path string) bool {
 	return true
 }
 
-// CheckEnvironment function check default env
-// @path : string
-// return bool, error
-func (util *Utils) CheckEnvironment(path string) (bool, error) {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return false, err
-	}
-	return true, nil
-}
-
 // ReadHome function
 // return string
 func (util *Utils) ReadHome() string {
@@ -197,16 +179,29 @@ func (util *Utils) ReadHome() string {
 	return usr.HomeDir
 }
 
+// CheckEnvironment function check default env
+// @path : string
+// return bool, error
+func (util *Utils) CheckEnvironment(path string) string {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return ""
+	}
+	return path
+}
+
 // LoadEnvirontment load environment config
 // @path : string
 func (util *Utils) LoadEnvirontment(path string) *entity.Environment {
-	if path == "" {
+	if util.CheckEnvironment(path) != "" {
 		err := godotenv.Load(path)
 		util.Check(err)
+	} else {
+		homeDir := util.ReadHome()
+		err := godotenv.Load(homeDir + "/.guppy")
+		util.Check(err)
 	}
-	homeDir := util.ReadHome()
-	err := godotenv.Load(homeDir + "/.guppy")
-	util.Check(err)
+
+	envi := &entity.Environment{}
 	envi.DialTimeOut, _ = strconv.Atoi(os.Getenv("OS_DIAL_TIMEOUT"))
 	envi.Urls = strings.Split(os.Getenv("OS_URLS"), ",")
 	return envi

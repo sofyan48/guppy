@@ -1,20 +1,46 @@
 package cmd
 
 import (
+	"github.com/sofyan48/guppy/guppy-cli/libs"
+	"github.com/sofyan48/guppy/guppy-cli/utils"
 	"github.com/urfave/cli"
 )
 
-var app *cli.App
+// CLIMapping ...
+type CLIMapping struct {
+	Utils utils.UtilsInterface
+	Lib   libs.LibraryInterface
+}
+
+// CLIMappingHandler ...
+func CLIMappingHandler() *CLIMapping {
+	return &CLIMapping{
+		Utils: utils.UtilsHandler(),
+		Lib:   libs.LibraryHandler(),
+	}
+}
 
 // ArgsMapping object mapping
 type ArgsMapping struct {
 	EnvPath      string
 	TemplatePath string
-	ID           string
+	Key          string
+	Value        string
 }
 
 // Args Glabal Acces args command
 var Args ArgsMapping
+var app *cli.App
+
+// AppCommands All Command line app
+func AppCommands() *cli.App {
+	app := Init()
+	handler := CLIMappingHandler()
+	app.Commands = []cli.Command{
+		handler.put(),
+	}
+	return app
+}
 
 // Init Initialise a CLI app
 func Init() *cli.App {
@@ -30,15 +56,6 @@ func Init() *cli.App {
 			Usage:       "Load environtment config from `FILE`",
 			Destination: &Args.EnvPath,
 		},
-	}
-	return app
-}
-
-// AppCommands All Command line app
-func AppCommands() *cli.App {
-	app := Init()
-	app.Commands = []cli.Command{
-		put(),
 	}
 	return app
 }
