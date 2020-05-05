@@ -26,6 +26,7 @@ type ArgsMapping struct {
 	TemplatePath string
 	Key          string
 	Value        string
+	Encryption   bool
 }
 
 // Args Glabal Acces args command

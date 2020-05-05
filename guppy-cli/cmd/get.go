@@ -16,6 +16,11 @@ func (handler *CLIMapping) get() cli.Command {
 			Usage:       "Path Key",
 			Destination: &Args.Key,
 		},
+		cli.BoolFlag{
+			Name:        "with-decryption",
+			Usage:       "Set Decryption For Value",
+			Destination: &Args.Encryption,
+		},
 	}
 	command.Action = func(c *cli.Context) error {
 		client, err := handler.Lib.GetClients(Args.EnvPath)
@@ -27,7 +32,12 @@ func (handler *CLIMapping) get() cli.Command {
 			return err
 		}
 		log.Println("Path: ", string(result.Kvs[0].Key))
-		log.Println("Value: ", string(result.Kvs[0].Value))
+		if Args.Encryption {
+			decValue, _ := handler.Lib.DecryptValue(string(result.Kvs[0].Value))
+			log.Println("Value: ", string(decValue))
+		} else {
+			log.Println("Value: ", string(result.Kvs[0].Value))
+		}
 		log.Println("Create Revision: ", result.Kvs[0].CreateRevision)
 		log.Println("Mod Revision: ", result.Kvs[0].ModRevision)
 		return nil

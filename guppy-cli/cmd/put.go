@@ -27,6 +27,11 @@ func (handler *CLIMapping) put() cli.Command {
 			Usage:       "Value for key",
 			Destination: &Args.Value,
 		},
+		cli.BoolFlag{
+			Name:        "encryption",
+			Usage:       "Set Encryption For Value",
+			Destination: &Args.Encryption,
+		},
 	}
 	command.Action = func(c *cli.Context) error {
 		client, err := handler.Lib.GetClients(Args.EnvPath)
@@ -34,9 +39,16 @@ func (handler *CLIMapping) put() cli.Command {
 			log.Println("PUT BY TEMPLATE")
 			return nil
 		}
+
 		params := client.GetParameters()
 		params.Path = Args.Key
-		params.Value = Args.Value
+		if Args.Encryption {
+			encValue, _ := handler.Lib.EncryptValue(Args.Value)
+			params.Value = string(encValue)
+		} else {
+			params.Value = Args.Value
+		}
+
 		client.Put(params)
 		result, err := client.Get(params.Path)
 		log.Println("Create Revision: ", result.Kvs[0].CreateRevision)
