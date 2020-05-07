@@ -32,11 +32,6 @@ func (handler *CLIMapping) put() cli.Command {
 			Usage:       "Set Encryption For Value",
 			Destination: &Args.Encryption,
 		},
-		cli.BoolFlag{
-			Name:        "overwrite",
-			Usage:       "Overwrites  Value",
-			Destination: &Args.Encryption,
-		},
 	}
 	command.Action = func(c *cli.Context) error {
 		client, err := handler.Lib.GetClients(Args.EnvPath)

@@ -40,6 +40,7 @@ func AppCommands() *cli.App {
 	app.Commands = []cli.Command{
 		handler.put(),
 		handler.get(),
+		handler.remove(),
 	}
 	return app
 }

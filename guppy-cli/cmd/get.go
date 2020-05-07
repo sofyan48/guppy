@@ -31,6 +31,10 @@ func (handler *CLIMapping) get() cli.Command {
 		if err != nil {
 			return err
 		}
+		if len(result.Kvs) >= 0 {
+			log.Println("No Path In Environtment")
+			return nil
+		}
 		log.Println("Path: ", string(result.Kvs[0].Key))
 		if Args.Encryption {
 			decValue, _ := handler.Lib.DecryptValue(string(result.Kvs[0].Value))
