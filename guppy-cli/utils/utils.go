@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/user"
@@ -14,6 +15,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/sofyan48/guppy/guppy-cli/entity"
 	"github.com/urfave/cli"
+	"gopkg.in/yaml.v2"
 )
 
 // Utils ...
@@ -47,6 +49,7 @@ type UtilsInterface interface {
 
 	ParseJSON(data string) (map[string]interface{}, error)
 	CheckTemplateFile(path string) (string, error)
+	ParsingYAML(path string) (*entity.TemplatesModels, error)
 }
 
 // Check Error
@@ -248,4 +251,18 @@ func (util *Utils) CheckTemplateFile(path string) (string, error) {
 		return "", cli.NewExitError("No Templates Parse", 1)
 	}
 	return templates, nil
+}
+
+// ParsingYAML ...
+func (util *Utils) ParsingYAML(path string) (*entity.TemplatesModels, error) {
+	yamlObject := &entity.TemplatesModels{}
+	ymlFile, err := ioutil.ReadFile(path)
+	if err != nil {
+		return yamlObject, err
+	}
+	err = yaml.Unmarshal(ymlFile, yamlObject)
+	if err != nil {
+		return yamlObject, err
+	}
+	return yamlObject, nil
 }
