@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	v1 "github.com/sofyan48/guppy/guppy-rest/app/v1/routes"
+	v1 "github.com/sofyan48/guppy/guppy-rest/src/app/v1/routes"
 )
 
 // LoadRouter params

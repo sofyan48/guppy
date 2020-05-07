@@ -2,9 +2,9 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	guppy "github.com/sofyan48/guppy/guppy-rest/app/v1/api/guppy/controller"
-	health "github.com/sofyan48/guppy/guppy-rest/app/v1/api/health/controller"
-	"github.com/sofyan48/guppy/guppy-rest/middleware"
+	guppy "github.com/sofyan48/guppy/guppy-rest/src/app/v1/api/guppy/controller"
+	health "github.com/sofyan48/guppy/guppy-rest/src/app/v1/api/health/controller"
+	"github.com/sofyan48/guppy/guppy-rest/src/middleware"
 )
 
 // VERSION ...
