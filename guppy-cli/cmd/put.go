@@ -9,7 +9,7 @@ import (
 func (handler *CLIMapping) put() cli.Command {
 	command := cli.Command{}
 	command.Name = "put"
-	command.Usage = "put [command]"
+	command.Usage = "put [option]"
 	command.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "file, f",
