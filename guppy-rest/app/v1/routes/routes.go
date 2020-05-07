@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	guppy "github.com/sofyan48/guppy/guppy-rest/app/v1/api/guppy/controller"
 	health "github.com/sofyan48/guppy/guppy-rest/app/v1/api/health/controller"
 	"github.com/sofyan48/guppy/guppy-rest/middleware"
 )
@@ -13,12 +14,14 @@ const VERSION = "v1"
 type V1RouterLoader struct {
 	Middleware middleware.DefaultMiddleware
 	Health     health.HealthControllerInterface
+	Guppy      guppy.GuppyControllerInterface
 }
 
 // V1RouterLoaderHandler ...
 func V1RouterLoaderHandler() *V1RouterLoader {
 	return &V1RouterLoader{
 		Health: health.HealthControllerHandler(),
+		Guppy:  guppy.GuppyControllerHandler(),
 	}
 }
 
@@ -32,4 +35,5 @@ type V1RouterLoaderInterface interface {
 func (rLoader *V1RouterLoader) V1Routes(router *gin.Engine) {
 	rLoader.initDocs(router)
 	rLoader.initHealth(router)
+	rLoader.initGuppy(router)
 }

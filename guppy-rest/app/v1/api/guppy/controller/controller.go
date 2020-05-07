@@ -1,13 +1,31 @@
 package controller
 
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sofyan48/guppy/guppy-rest/app/v1/api/guppy/service"
+	"github.com/sofyan48/guppy/guppy-rest/app/v1/utility/rest"
+)
+
 // GuppyController ...
 type GuppyController struct {
+	Service service.GuppyServiceInterface
 }
 
-// GuppyHandler ...
-func GuppyHandler() *GuppyController {
-	return &GuppyController{}
+// GuppyControllerHandler ...
+func GuppyControllerHandler() *GuppyController {
+	return &GuppyController{
+		Service: service.GuppyServiceHandler(),
+	}
 }
 
-// GuppyInterface ...
-type GuppyInterface interface{}
+// GuppyControllerInterface ...
+type GuppyControllerInterface interface {
+	Get(context *gin.Context)
+}
+
+// Get ...
+func (handler *GuppyController) Get(context *gin.Context) {
+	rest.ResponseMessages(context, http.StatusOK, "OK")
+}

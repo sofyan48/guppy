@@ -4,10 +4,10 @@ package service
 type GuppyService struct {
 }
 
-// GuppyHandler ...
-func GuppyHandler() *GuppyService {
+// GuppyServiceHandler ...
+func GuppyServiceHandler() *GuppyService {
 	return &GuppyService{}
 }
 
-// GuppyInterface ...
-type GuppyInterface interface{}
+// GuppyServiceInterface ...
+type GuppyServiceInterface interface{}
