@@ -1,7 +1,6 @@
 module github.com/sofyan48/guppy
 
 go 1.14
-
 require (
 	github.com/Luzifer/go-openssl v2.0.0+incompatible
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
@@ -13,8 +12,6 @@ require (
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/joho/godotenv v1.3.0
-	github.com/sofyan48/ggwp v0.0.0-20200304060413-25e7ada1ba33 // indirect
-	github.com/sofyan48/nemo v0.0.0-20200329103742-8954c2e0cfc3
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.5

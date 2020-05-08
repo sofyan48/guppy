@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/sofyan48/ggwp/src/config"
+	"github.com/sofyan48/guppy/guppy-rest/src/config"
 	apiRouter "github.com/sofyan48/guppy/guppy-rest/src/router"
 )
 
