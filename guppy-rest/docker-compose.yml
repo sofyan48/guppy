@@ -1,15 +1,37 @@
-version: '3'
-services: 
-    guppy:
-        build: .
-        image: 
-        restart: always
+version: "3.2"
+
+services:
+    database_1:
+        container_name: database_1
+        image: cockroachdb/cockroach:latest
+        volumes:
+        - ./database:/cockroach/cockroach-data
+        command: start --insecure
         ports:
-            - 80:80
-        environment:
-            - GIN_MODE=release
-            - SERVER_ADDRESS=0.0.0.0
-            - SERVER_PORT=80
-            - SERVER_TIMEZONE=Asia/Jakarta
-            - SWAGGER_SERVER_ADDRESS=http://0.0.0.0
-        command: ./main -e production  
+        - "26257:26257"
+        - "8080:8080"
+        networks:
+            guppy_net:
+                aliases:
+                - database_1 
+    # guppy:
+    #     build: .
+    #     image: 
+    #     restart: always
+    #     ports:
+    #         - 80:80
+    #     environment:
+    #         - GIN_MODE=release
+    #         - SERVER_ADDRESS=0.0.0.0
+    #         - SERVER_PORT=80
+    #         - SERVER_TIMEZONE=Asia/Jakarta
+    #         - SWAGGER_SERVER_ADDRESS=http://0.0.0.0
+    #     command: ./main -e production 
+    #     networks:
+    #         guppy_net:
+    #             aliases:
+    #             - guppy
+        
+networks:
+    guppy_net:
+        driver: bridge 

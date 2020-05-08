@@ -39,7 +39,6 @@ type UtilsInterface interface {
 	CheckEnvironment(path string) string
 	ParseJSON(data string) (map[string]interface{}, error)
 	CheckTemplateFile(path string) (string, error)
-	ParsingYAML(path string) (*entity.TemplatesModels, error)
 }
 
 // CheckFile function check folder

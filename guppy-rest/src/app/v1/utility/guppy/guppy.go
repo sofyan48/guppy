@@ -3,11 +3,13 @@ package guppy
 import (
 	"log"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/Luzifer/go-openssl"
 	"github.com/sofyan48/guppy/guppy"
-	"github.com/sofyan48/guppy/guppy-cli/entity"
-	"github.com/sofyan48/guppy/guppy-cli/utils"
+	"github.com/sofyan48/guppy/guppy-rest/src/app/v1/api/guppy/entity"
+	"github.com/sofyan48/guppy/guppy-rest/src/app/v1/utility/utils"
 	"github.com/sofyan48/guppy/guppy/config"
 	"github.com/sofyan48/guppy/guppy/libs/etcd"
 )
@@ -23,18 +25,17 @@ func GuppyLibraryHandler() *GuppyLibrary {
 }
 
 type GuppyLibraryInterface interface {
-	GetClients(path string) (*etcd.EtcdLibs, error)
+	GetClients() (*etcd.EtcdLibs, error)
 	EncryptValue(value string) ([]byte, error)
 	DecryptValue(value string) ([]byte, error)
-	PutByPath(EnvPath string, data *entity.TemplatesModels) error
+	PutByPath(data *entity.RequestPayload) error
 }
 
 // GetClients ...
-func (libs *GuppyLibrary) GetClients(path string) (*etcd.EtcdLibs, error) {
-	envi := libs.Utils.LoadEnvirontment(path)
+func (libs *GuppyLibrary) GetClients() (*etcd.EtcdLibs, error) {
 	config := config.NewConfig()
-	config.DialTimeOut = envi.DialTimeOut
-	config.Urls = envi.Urls
+	config.DialTimeOut, _ = strconv.Atoi(os.Getenv("OS_DIAL_TIMEOUT"))
+	config.Urls = strings.Split(os.Getenv("OS_URLS"), ",")
 	return guppy.Client(config).New()
 }
 
@@ -51,8 +52,8 @@ func (libs *GuppyLibrary) DecryptValue(value string) ([]byte, error) {
 }
 
 // PutByPath ..
-func (libs *GuppyLibrary) PutByPath(EnvPath string, data *entity.TemplatesModels) error {
-	client, err := libs.GetClients(EnvPath)
+func (libs *GuppyLibrary) PutByPath(data *entity.RequestPayload) error {
+	client, err := libs.GetClients()
 	if err != nil {
 		return nil
 	}
