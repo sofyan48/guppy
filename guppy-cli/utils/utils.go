@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -12,7 +13,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/coreos/etcd/mvcc/mvccpb"
 	"github.com/joho/godotenv"
+	"github.com/rodaine/table"
 	"github.com/sofyan48/guppy/guppy-cli/entity"
 	"github.com/urfave/cli"
 	"gopkg.in/yaml.v2"
@@ -50,6 +53,7 @@ type UtilsInterface interface {
 	ParseJSON(data string) (map[string]interface{}, error)
 	CheckTemplateFile(path string) (string, error)
 	ParsingYAML(path string) (*entity.TemplatesModels, error)
+	GenerateGetTable(headers []string, value []*mvccpb.KeyValue)
 }
 
 // Check Error
@@ -265,4 +269,26 @@ func (util *Utils) ParsingYAML(path string) (*entity.TemplatesModels, error) {
 		return yamlObject, err
 	}
 	return yamlObject, nil
+}
+
+// GenerateGetTable ...
+func (util *Utils) GenerateGetTable(headers []string, value []*mvccpb.KeyValue) {
+	table.DefaultHeaderFormatter = func(format string, vals ...interface{}) string {
+		return strings.ToUpper(fmt.Sprintf(format, vals...))
+	}
+	table.DefaultPadding = 4
+	var header []interface{}
+	for _, i := range headers {
+		header = append(header, i)
+	}
+	tbl := table.New(header...)
+	for _, i := range value {
+		var resultCol []interface{}
+		resultCol = append(resultCol, string(i.Key))
+		resultCol = append(resultCol, string(i.Value))
+		resultCol = append(resultCol, i.CreateRevision)
+		resultCol = append(resultCol, i.ModRevision)
+		tbl.AddRow(resultCol...)
+	}
+	tbl.Print()
 }

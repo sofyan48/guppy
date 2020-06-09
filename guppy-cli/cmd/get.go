@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/urfave/cli"
+	"go.etcd.io/etcd/clientv3"
 )
 
 func (handler *CLIMapping) get() cli.Command {
@@ -15,6 +16,7 @@ func (handler *CLIMapping) get() cli.Command {
 			Name:        "path, p",
 			Usage:       "Path Key",
 			Destination: &Args.Key,
+			Required:    true,
 		},
 		cli.BoolFlag{
 			Name:        "with-decryption",
@@ -23,23 +25,38 @@ func (handler *CLIMapping) get() cli.Command {
 		},
 	}
 	command.Action = func(c *cli.Context) error {
+		result := &clientv3.GetResponse{}
 		client, err := handler.Lib.GetClients(Args.EnvPath)
 		if err != nil {
 			return err
 		}
-		result, err := client.Get(Args.Key)
-		if err != nil {
-			return err
+
+		headers := []string{
+			"Path",
+			"Value",
+			"Create Revision",
+			"Mod Revision",
 		}
-		log.Println("Path: ", string(result.Kvs[0].Key))
-		if Args.Encryption {
-			decValue, _ := handler.Lib.DecryptValue(string(result.Kvs[0].Value))
-			log.Println("Value: ", string(decValue))
-		} else {
-			log.Println("Value: ", string(result.Kvs[0].Value))
+
+		if len(c.Args()) <= 0 {
+			fmt.Println("Select Get subcommand items or path")
+			return nil
 		}
-		log.Println("Create Revision: ", result.Kvs[0].CreateRevision)
-		log.Println("Mod Revision: ", result.Kvs[0].ModRevision)
+		switch c.Args()[0] {
+		case "items":
+			result, err = client.Get(Args.Key)
+			if err != nil {
+				return err
+			}
+		case "path":
+			result, err = client.GetByPath(Args.Key)
+			if err != nil {
+				return err
+			}
+		}
+		fmt.Println("Result: ")
+		handler.Utils.GenerateGetTable(headers, result.Kvs)
+		fmt.Println("---")
 		return nil
 	}
 
