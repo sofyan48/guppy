@@ -17,7 +17,7 @@ type RequestPayload struct {
 // ParametersRequest ...
 type ParametersRequest struct {
 	Path      string `form:"path" json:"path"`
-	IsEncrypt bool   `form:"is_encrypt" json:"is_encrypt"`
+	IsEncrypt bool   `form:"decryption" json:"decryption"`
 }
 
 // GetResponse ...

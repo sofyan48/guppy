@@ -59,6 +59,7 @@ func (service *GuppyService) GetService(params *entity.ParametersRequest) (*enti
 
 // GetServicePath ...
 func (service *GuppyService) GetServicePath(params *entity.ParametersRequest) ([]entity.GetResponse, error) {
+	// fmt.Println(params)
 	client, err := service.Guppy.GetClients()
 	if err != nil {
 		return nil, err
@@ -72,7 +73,18 @@ func (service *GuppyService) GetServicePath(params *entity.ParametersRequest) ([
 		data := entity.GetResponse{}
 		data.Revision = i.CreateRevision - i.ModRevision
 		data.Path = string(i.Key)
-		data.Value = string(i.Value)
+		var value string
+		if params.IsEncrypt {
+			decValue, err := service.Guppy.DecryptValue(string(i.Value))
+			if err != nil {
+				value = string(i.Value)
+			} else {
+				value = string(decValue)
+			}
+		} else {
+			value = string(i.Value)
+		}
+		data.Value = value
 		data.Version = i.Version
 		result = append(result, data)
 	}
