@@ -23,6 +23,7 @@ func ConfigurationServiceHandler() *ConfigurationService {
 type ConfigurationServiceInterface interface {
 	UserConfigurationService(params *entity.ConfigurationUserRequest) error
 	GenerateUserKeys(params *entity.ConfigurationUserRequest) (*entity.ConfigurationResponse, error)
+	AddUser(body *entity.AddUserConfigRequest) error
 }
 
 // UserConfigurationService ...
@@ -77,4 +78,45 @@ func (service *ConfigurationService) GenerateUserKeys(params *entity.Configurati
 	response.Key = string(encValue)
 	response.User = params.User
 	return response, nil
+}
+
+// AddUser ...
+func (service *ConfigurationService) AddUser(body *entity.AddUserConfigRequest) error {
+	client, err := service.Guppy.GetClients()
+	if err != nil {
+		return err
+	}
+	checkUser, err := client.GetByPath("app/config/user/" + body.User)
+	if err != nil {
+		return err
+	}
+	if len(checkUser.Kvs) >= 1 {
+		return errors.New("Username Found")
+	}
+	userParams := client.GetParameters()
+	userParams.Path = "app/config/user/" + body.User + "/username"
+	userParams.Value = body.User
+	_, err = client.Put(userParams)
+	if err != nil {
+		return err
+	}
+	userPassParams := client.GetParameters()
+	userPassParams.Path = "app/config/user/" + body.User + "/password"
+	encValue, err := service.Guppy.EncryptValue(body.Password)
+	if err != nil {
+		return err
+	}
+	userPassParams.Value = string(encValue)
+	_, err = client.Put(userPassParams)
+	if err != nil {
+		return err
+	}
+	userRolesParams := client.GetParameters()
+	userRolesParams.Path = "app/config/user/" + body.User + "/roles"
+	userRolesParams.Value = body.Roles
+	_, err = client.Put(userRolesParams)
+	if err != nil {
+		return err
+	}
+	return nil
 }

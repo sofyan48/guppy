@@ -23,18 +23,19 @@ func ConfigurationControllerHandler() *ConfigurationController {
 type ConfigurationControllerInterface interface {
 	UserDefault(context *gin.Context)
 	GenerateKeys(context *gin.Context)
+	AddUser(context *gin.Context)
 }
 
 // User params
 // @contex: gin Context
 func (ctrl *ConfigurationController) UserDefault(context *gin.Context) {
-	params := &entity.ConfigurationUserRequest{}
-	if err := context.ShouldBind(params); err != nil {
+	body := &entity.ConfigurationUserRequest{}
+	if err := context.ShouldBind(body); err != nil {
 		rest.InvalidParameterResponse(context, err)
 		return
 	}
 
-	err := ctrl.Service.UserConfigurationService(params)
+	err := ctrl.Service.UserConfigurationService(body)
 	if err != nil {
 		rest.ErrorResponse(context, err)
 		return
@@ -45,16 +46,32 @@ func (ctrl *ConfigurationController) UserDefault(context *gin.Context) {
 
 // GenerateKeys ...
 func (ctrl *ConfigurationController) GenerateKeys(context *gin.Context) {
-	params := &entity.ConfigurationUserRequest{}
-	if err := context.ShouldBind(params); err != nil {
+	body := &entity.ConfigurationUserRequest{}
+	if err := context.ShouldBind(body); err != nil {
 		rest.InvalidParameterResponse(context, err)
 		return
 	}
-	result, err := ctrl.Service.GenerateUserKeys(params)
+	result, err := ctrl.Service.GenerateUserKeys(body)
 	if err != nil {
 		rest.ErrorResponse(context, err)
 		return
 	}
 	rest.SuccessResponse(context, result, nil, "Keys Generate")
+	return
+}
+
+// AddUser ...
+func (ctrl *ConfigurationController) AddUser(context *gin.Context) {
+	body := &entity.AddUserConfigRequest{}
+	if err := context.ShouldBind(body); err != nil {
+		rest.InvalidParameterResponse(context, err)
+		return
+	}
+	err := ctrl.Service.AddUser(body)
+	if err != nil {
+		rest.ErrorResponse(context, err)
+		return
+	}
+	rest.SuccessResponse(context, nil, nil, "User Successfully Insert")
 	return
 }
