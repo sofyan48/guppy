@@ -21,6 +21,8 @@ func GuppyServiceHandler() *GuppyService {
 type GuppyServiceInterface interface {
 	GetService(params *entity.ParametersRequest) (*entity.GetResponse, error)
 	GetServicePath(params *entity.ParametersRequest) ([]entity.GetResponse, error)
+	InsertItems(body *entity.InsertDataModels) error
+	InsertJSONRaw(body *entity.RequestPayload) error
 }
 
 // GetService ...
@@ -59,7 +61,6 @@ func (service *GuppyService) GetService(params *entity.ParametersRequest) (*enti
 
 // GetServicePath ...
 func (service *GuppyService) GetServicePath(params *entity.ParametersRequest) ([]entity.GetResponse, error) {
-	// fmt.Println(params)
 	client, err := service.Guppy.GetClients()
 	if err != nil {
 		return nil, err
@@ -89,4 +90,51 @@ func (service *GuppyService) GetServicePath(params *entity.ParametersRequest) ([
 		result = append(result, data)
 	}
 	return result, nil
+}
+
+// InsertItems ...
+func (service *GuppyService) InsertItems(body *entity.InsertDataModels) error {
+	client, err := service.Guppy.GetClients()
+	if err != nil {
+		return err
+	}
+	data := client.GetParameters()
+	data.Path = body.Path
+	if body.IsEncrypt == true {
+		encValue, err := service.Guppy.EncryptValue(body.Value)
+		if err != nil {
+			return err
+		}
+		data.Value = string(encValue)
+	} else {
+		data.Value = body.Value
+	}
+	_, err = client.Put(data)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// InsertJSONRaw ...
+func (service *GuppyService) InsertJSONRaw(body *entity.RequestPayload) error {
+	client, err := service.Guppy.GetClients()
+	if err != nil {
+		return err
+	}
+	for _, i := range body.Parameters {
+		parameters := client.GetParameters()
+		if i.IsEncrypt == true {
+			encValue, err := service.Guppy.EncryptValue(i.Value)
+			if err != nil {
+				return err
+			}
+			parameters.Value = string(encValue)
+		} else {
+			parameters.Value = i.Value
+		}
+		parameters.Path = i.Path
+		go client.Put(parameters)
+	}
+	return nil
 }

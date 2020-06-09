@@ -4,7 +4,7 @@ package entity
 type InsertDataModels struct {
 	Path      string `json:"path"`
 	Value     string `json:"value"`
-	IsEncrypt bool   `json:"isEncrypt"`
+	IsEncrypt bool   `json:"is_encrypt"`
 }
 
 // RequestPayload ...
@@ -17,6 +17,7 @@ type RequestPayload struct {
 // ParametersRequest ...
 type ParametersRequest struct {
 	Path      string `form:"path" json:"path"`
+	Value     string `form:"value" json:"value"`
 	IsEncrypt bool   `form:"decryption" json:"decryption"`
 }
 
@@ -24,6 +25,6 @@ type ParametersRequest struct {
 type GetResponse struct {
 	Path     string `json:"path"`
 	Value    string `json:"value"`
-	Revision int64  `json:"revision"`
+	Revision int64  `json:"revision,omitempty"`
 	Version  int64  `json:"version"`
 }

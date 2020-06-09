@@ -23,6 +23,8 @@ func GuppyControllerHandler() *GuppyController {
 type GuppyControllerInterface interface {
 	Get(context *gin.Context)
 	Path(context *gin.Context)
+	PostRaw(context *gin.Context)
+	PostItems(context *gin.Context)
 }
 
 // Get ...
@@ -53,6 +55,38 @@ func (handler *GuppyController) Path(context *gin.Context) {
 		rest.InvalidParameterResponse(context, err)
 		return
 	}
-	rest.SuccessResponse(context, data, nil, "")
+	rest.SuccessResponse(context, data, params, "")
+	return
+}
+
+// PostRaw ...
+func (handler *GuppyController) PostRaw(context *gin.Context) {
+	jsonBody := &entity.RequestPayload{}
+	if err := context.ShouldBind(jsonBody); err != nil {
+		rest.InvalidParameterResponse(context, err)
+		return
+	}
+	err := handler.Service.InsertJSONRaw(jsonBody)
+	if err != nil {
+		rest.ErrorResponse(context, err)
+		return
+	}
+	rest.SuccessResponse(context, nil, nil, "Parameter Insert")
+	return
+}
+
+// PostItems ...
+func (handler *GuppyController) PostItems(context *gin.Context) {
+	itemsBody := &entity.InsertDataModels{}
+	if err := context.ShouldBind(itemsBody); err != nil {
+		rest.InvalidParameterResponse(context, err)
+		return
+	}
+	err := handler.Service.InsertItems(itemsBody)
+	if err != nil {
+		rest.ErrorResponse(context, err)
+		return
+	}
+	rest.SuccessResponse(context, nil, nil, "Parameter Insert")
 	return
 }
