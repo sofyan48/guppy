@@ -25,6 +25,7 @@ type GuppyControllerInterface interface {
 	Path(context *gin.Context)
 	PostRaw(context *gin.Context)
 	PostItems(context *gin.Context)
+	Delete(context *gin.Context)
 }
 
 // Get ...
@@ -39,7 +40,7 @@ func (handler *GuppyController) Get(context *gin.Context) {
 		rest.InvalidParameterResponse(context, err)
 		return
 	}
-	rest.SuccessResponse(context, data, nil, "")
+	rest.SuccessResponse(context, data, params, "")
 	return
 }
 
@@ -88,5 +89,21 @@ func (handler *GuppyController) PostItems(context *gin.Context) {
 		return
 	}
 	rest.SuccessResponse(context, nil, nil, "Parameter Insert")
+	return
+}
+
+// Delete ...
+func (handler *GuppyController) Delete(context *gin.Context) {
+	params := &entity.ParametersRequest{}
+	if err := context.ShouldBind(params); err != nil {
+		rest.InvalidParameterResponse(context, err)
+		return
+	}
+	result, err := handler.Service.Delete(params)
+	if err != nil {
+		rest.ErrorResponse(context, err)
+		return
+	}
+	rest.SuccessResponse(context, result, params, "")
 	return
 }

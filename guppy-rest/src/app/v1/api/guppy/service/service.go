@@ -23,6 +23,7 @@ type GuppyServiceInterface interface {
 	GetServicePath(params *entity.ParametersRequest) ([]entity.GetResponse, error)
 	InsertItems(body *entity.InsertDataModels) error
 	InsertJSONRaw(body *entity.RequestPayload) error
+	Delete(params *entity.ParametersRequest) (interface{}, error)
 }
 
 // GetService ...
@@ -137,4 +138,15 @@ func (service *GuppyService) InsertJSONRaw(body *entity.RequestPayload) error {
 		go client.Put(parameters)
 	}
 	return nil
+}
+
+// Delete ...
+func (service *GuppyService) Delete(params *entity.ParametersRequest) (interface{}, error) {
+	client, err := service.Guppy.GetClients()
+	if err != nil {
+		return nil, err
+	}
+	data := client.GetParameters()
+	data.Path = params.Path
+	return client.Del(data)
 }
