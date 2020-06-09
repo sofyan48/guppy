@@ -29,6 +29,7 @@ type GuppyLibraryInterface interface {
 	EncryptValue(value string) ([]byte, error)
 	DecryptValue(value string) ([]byte, error)
 	PutByPath(data *entity.RequestPayload) error
+	CheckUserConfig() error
 }
 
 // GetClients ...
@@ -72,4 +73,27 @@ func (libs *GuppyLibrary) PutByPath(data *entity.RequestPayload) error {
 		log.Println("Mod Revision: ", result.Kvs[0].ModRevision)
 	}
 	return err
+}
+
+// CheckUserConfig ...
+func (libs *GuppyLibrary) CheckUserConfig() error {
+	client, err := libs.GetClients()
+	if err != nil {
+		return err
+	}
+	result, err := client.GetByPath("app/config/admin")
+	if err != nil {
+		return err
+	}
+	if len(result.Kvs) == 0 {
+		paramsUser := client.GetParameters()
+		paramsUser.Path = "app/config/admin/username"
+		paramsUser.Value = "admin"
+		paramsPassword := client.GetParameters()
+		paramsPassword.Path = "app/config/admin/password"
+		paramsPassword.Value = "admin"
+		client.Put(paramsPassword)
+		client.Put(paramsUser)
+	}
+	return nil
 }
