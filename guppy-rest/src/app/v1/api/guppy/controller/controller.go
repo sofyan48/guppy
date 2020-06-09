@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/sofyan48/guppy/guppy-rest/src/app/v1/api/guppy/entity"
 	"github.com/sofyan48/guppy/guppy-rest/src/app/v1/api/guppy/service"
@@ -24,20 +22,37 @@ func GuppyControllerHandler() *GuppyController {
 // GuppyControllerInterface ...
 type GuppyControllerInterface interface {
 	Get(context *gin.Context)
+	Path(context *gin.Context)
 }
 
 // Get ...
 func (handler *GuppyController) Get(context *gin.Context) {
 	params := &entity.ParametersRequest{}
 	if err := context.ShouldBind(params); err != nil {
-		rest.ResponseMessages(context, http.StatusBadRequest, "Bad Request")
+		rest.InvalidParameterResponse(context, err)
 		return
 	}
 	data, err := handler.Service.GetService(params)
 	if err != nil {
-		rest.ResponseMessages(context, http.StatusInternalServerError, err.Error())
+		rest.InvalidParameterResponse(context, err)
 		return
 	}
-	rest.ResponseList(context, http.StatusOK, data, nil)
+	rest.SuccessResponse(context, data, nil, "")
+	return
+}
+
+// Path ...
+func (handler *GuppyController) Path(context *gin.Context) {
+	params := &entity.ParametersRequest{}
+	if err := context.ShouldBind(params); err != nil {
+		rest.InvalidParameterResponse(context, err)
+		return
+	}
+	data, err := handler.Service.GetServicePath(params)
+	if err != nil {
+		rest.InvalidParameterResponse(context, err)
+		return
+	}
+	rest.SuccessResponse(context, data, nil, "")
 	return
 }

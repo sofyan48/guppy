@@ -20,9 +20,10 @@ type ParametersRequest struct {
 	IsEncrypt bool   `form:"is_encrypt" json:"is_encrypt"`
 }
 
+// GetResponse ...
 type GetResponse struct {
-	Path           string `json:"path"`
-	Value          string `json:"value"`
-	CreateRevision int64  `json:"create_revision"`
-	UpdateRevision int64  `json:"update_revision"`
+	Path     string `json:"path"`
+	Value    string `json:"value"`
+	Revision int64  `json:"revision"`
+	Version  int64  `json:"version"`
 }

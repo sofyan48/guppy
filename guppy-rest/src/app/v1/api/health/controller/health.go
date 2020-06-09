@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/sofyan48/guppy/guppy-rest/src/app/v1/api/health/service"
 	"github.com/sofyan48/guppy/guppy-rest/src/app/v1/utility/rest"
@@ -29,6 +27,6 @@ type HealthControllerInterface interface {
 // @contex: gin Context
 func (ctrl *HealthController) Health(context *gin.Context) {
 	data := ctrl.Service.HealthService()
-	rest.ResponseData(context, http.StatusOK, data)
+	rest.SuccessResponse(context, data, nil, "")
 	return
 }

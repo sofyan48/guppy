@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/sofyan48/guppy/guppy-rest/src/app/v1/api/guppy/entity"
 	"github.com/sofyan48/guppy/guppy-rest/src/app/v1/utility/guppy"
 )
@@ -22,11 +20,11 @@ func GuppyServiceHandler() *GuppyService {
 // GuppyServiceInterface ...
 type GuppyServiceInterface interface {
 	GetService(params *entity.ParametersRequest) (*entity.GetResponse, error)
+	GetServicePath(params *entity.ParametersRequest) ([]entity.GetResponse, error)
 }
 
 // GetService ...
 func (service *GuppyService) GetService(params *entity.ParametersRequest) (*entity.GetResponse, error) {
-	fmt.Println(params)
 	client, err := service.Guppy.GetClients()
 	if err != nil {
 		return nil, err
@@ -52,9 +50,31 @@ func (service *GuppyService) GetService(params *entity.ParametersRequest) (*enti
 	}
 
 	result := &entity.GetResponse{}
-	result.CreateRevision = data.Kvs[0].CreateRevision
-	result.UpdateRevision = data.Kvs[0].ModRevision
+	result.Revision = data.Kvs[0].CreateRevision - data.Kvs[0].ModRevision
 	result.Path = string(data.Kvs[0].Key)
 	result.Value = value
+	result.Version = data.Kvs[0].Version
+	return result, nil
+}
+
+// GetServicePath ...
+func (service *GuppyService) GetServicePath(params *entity.ParametersRequest) ([]entity.GetResponse, error) {
+	client, err := service.Guppy.GetClients()
+	if err != nil {
+		return nil, err
+	}
+	data, err := client.GetByPath(params.Path)
+	if err != nil {
+		return nil, err
+	}
+	var result []entity.GetResponse
+	for _, i := range data.Kvs {
+		data := entity.GetResponse{}
+		data.Revision = i.CreateRevision - i.ModRevision
+		data.Path = string(i.Key)
+		data.Value = string(i.Value)
+		data.Version = i.Version
+		result = append(result, data)
+	}
 	return result, nil
 }
