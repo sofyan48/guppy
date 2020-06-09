@@ -56,7 +56,6 @@ func (handler *CLIMapping) get() cli.Command {
 		}
 		fmt.Println("Result: ")
 		handler.Utils.GenerateGetTable(headers, result.Kvs)
-		fmt.Println("---")
 		return nil
 	}
 

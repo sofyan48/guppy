@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/urfave/cli"
 )
@@ -54,9 +54,18 @@ func (handler *CLIMapping) put() cli.Command {
 			return err
 		}
 		result, err := client.Get(params.Path)
-		log.Println("Create Revision: ", result.Kvs[0].CreateRevision)
-		log.Println("Mod Revision: ", result.Kvs[0].ModRevision)
-		return err
+		if err != nil {
+			return err
+		}
+		fmt.Println("Paramater Insert")
+		headers := []string{
+			"Path",
+			"Value",
+			"Create Revision",
+			"Mod Revision",
+		}
+		handler.Utils.GenerateGetTable(headers, result.Kvs)
+		return nil
 	}
 
 	return command

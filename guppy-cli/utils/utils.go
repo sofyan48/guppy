@@ -291,4 +291,5 @@ func (util *Utils) GenerateGetTable(headers []string, value []*mvccpb.KeyValue) 
 		tbl.AddRow(resultCol...)
 	}
 	tbl.Print()
+	fmt.Println("___")
 }
