@@ -49,7 +49,10 @@ func (handler *CLIMapping) put() cli.Command {
 			params.Value = Args.Value
 		}
 
-		client.Put(params)
+		_, err = client.Put(params)
+		if err != nil {
+			return err
+		}
 		result, err := client.Get(params.Path)
 		log.Println("Create Revision: ", result.Kvs[0].CreateRevision)
 		log.Println("Mod Revision: ", result.Kvs[0].ModRevision)
