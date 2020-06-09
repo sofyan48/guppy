@@ -74,7 +74,6 @@ func (lib *EtcdLibs) GetByPath(path string) (*clientv3.GetResponse, error) {
 	opts := []clientv3.OpOption{
 		clientv3.WithPrefix(),
 		clientv3.WithSort(clientv3.SortByKey, clientv3.SortAscend),
-		clientv3.WithLimit(3),
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), lib.DialTimeout)
