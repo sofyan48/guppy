@@ -21,13 +21,13 @@ func ConfigurationControllerHandler() *ConfigurationController {
 
 // ConfigurationControllerInterface ...
 type ConfigurationControllerInterface interface {
-	User(context *gin.Context)
+	UserDefault(context *gin.Context)
 	GenerateKeys(context *gin.Context)
 }
 
 // User params
 // @contex: gin Context
-func (ctrl *ConfigurationController) User(context *gin.Context) {
+func (ctrl *ConfigurationController) UserDefault(context *gin.Context) {
 	params := &entity.ConfigurationUserRequest{}
 	if err := context.ShouldBind(params); err != nil {
 		rest.InvalidParameterResponse(context, err)

@@ -9,6 +9,6 @@ const CONFIGROUTES = VERSION + "/"
 
 func (rLoader *V1RouterLoader) initConfig(router *gin.Engine) {
 	group := router.Group(GUPPYROUTES)
-	group.PUT("config/user", rLoader.Config.User)
+	group.PUT("config/user", rLoader.Config.UserDefault)
 	group.POST("config/key", rLoader.Config.GenerateKeys)
 }
