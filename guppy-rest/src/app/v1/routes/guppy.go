@@ -9,9 +9,9 @@ const GUPPYROUTES = VERSION + "/"
 
 func (rLoader *V1RouterLoader) initGuppy(router *gin.Engine) {
 	group := router.Group(GUPPYROUTES)
-	group.GET("get/item", rLoader.Guppy.Get)
-	group.GET("get/path", rLoader.Guppy.Path)
-	group.POST("put/raw", rLoader.Guppy.PostRaw)
+	group.GET("get/item", rLoader.Middleware.Auth(), rLoader.Guppy.Get)
+	group.GET("get/path", rLoader.Middleware.Auth(), rLoader.Guppy.Path)
+	group.POST("put/raw", rLoader.Middleware.Auth(), rLoader.Guppy.PostRaw)
 	group.POST("put/item", rLoader.Guppy.PostItems)
-	group.DELETE("delete/item", rLoader.Guppy.Delete)
+	group.DELETE("delete/item", rLoader.Middleware.Auth(), rLoader.Guppy.Delete)
 }

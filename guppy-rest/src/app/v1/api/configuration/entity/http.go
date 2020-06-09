@@ -2,7 +2,7 @@ package entity
 
 // ConfigurationResponse ...
 type ConfigurationResponse struct {
-	Key  string `json:"key,omitempty"`
+	Key  string `json:"authorization,omitempty"`
 	User string `json:"user,omitempty"`
 }
 

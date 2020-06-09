@@ -72,6 +72,7 @@ func (service *ConfigurationService) GenerateUserKeys(params *entity.Configurati
 		return nil, err
 	}
 	keysParams.Value = string(encValue)
+	client.Put(keysParams)
 	response := &entity.ConfigurationResponse{}
 	response.Key = string(encValue)
 	response.User = params.User
